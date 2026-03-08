@@ -58,4 +58,22 @@ class Referral extends Model
     {
         return $this->morphMany(AuditLog::class, 'auditable');
     }
+
+
+    public function scopeSearchAndFilter($query, array $filters)
+    {
+        if (isset($filters['status'])) {
+            $query->where('status', $filters['status']);
+        }
+        if (isset($filters['priority'])) {
+            $query->where('priority', $filters['priority']);
+        }
+        if (isset($filters['referring_party_id'])) {
+            $query->where('referring_party_id', $filters['referring_party_id']);
+        }
+        if (isset($filters['patient_id'])) {
+            $query->where('patient_id', $filters['patient_id']);
+        }
+        return $query;
+    }
 }

@@ -6,6 +6,7 @@ use App\Enums\ReferralStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Referral\StoreReferralRequest;
 use App\Http\Resources\Referral\ReferralResource;
+use App\Http\Resources\Referral\ReferralResourceCollection;
 use App\Models\Patient;
 use App\Models\Referral;
 use App\Models\ReferringParty;
@@ -15,6 +16,16 @@ use Illuminate\Support\Facades\DB;
 
 class ReferralController extends Controller
 {
+
+    public function index(Request $request)
+    {
+        $referrals = Referral::with('patient', 'referringParty')
+            ->searchAndFilter($request->all())
+            ->paginate(10);
+        return response()->json(
+            new ReferralResourceCollection($referrals),
+        );
+    }
     public function store(StoreReferralRequest $request): JsonResponse
     {
         try {
