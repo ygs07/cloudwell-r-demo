@@ -10,3 +10,5 @@ Route::post('/auth/logout', [AuthController::class, 'logout'])->name('auth.logou
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+
+require __DIR__ . '/api/v1/referrals.php';
