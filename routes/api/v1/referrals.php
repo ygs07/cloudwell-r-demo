@@ -12,4 +12,8 @@ Route::prefix('/v1')->group(function () {
     Route::get('/referrals', [ReferralController::class, 'index'])
         ->name('api.v1.referrals.index')
         ->middleware('auth:sanctum');
+
+    Route::get('/referrals/{referral}', [ReferralController::class, 'show'])
+        ->name('api.v1.referrals.show')
+        ->middleware('auth:sanctum');
 });

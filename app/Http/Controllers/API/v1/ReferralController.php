@@ -74,4 +74,12 @@ class ReferralController extends Controller
         }
     }
 
+    public function show(Referral $referral)
+    {
+        $referral->load('patient', 'referringParty');
+        return response()->json(
+            new ReferralResource($referral),
+        );
+    }
+
 }
