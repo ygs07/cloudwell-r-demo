@@ -30,7 +30,7 @@ class EnsureIdempotency
             ->where('endpoint', $endpoint)
             ->first();
 
-        if ($existing && $existing->response) {
+        if ($existing && $existing->response && $existing->status_code) {
             return response()->json(
                 json_decode($existing->response, true),
                 $existing->status_code 
