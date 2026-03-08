@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\API\v1;
 
+use App\Enums\BloodGroup;
+use App\Enums\Genotype;
 use App\Enums\ReferralStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Referral\CancelReferralRequest;
@@ -36,8 +38,8 @@ class ReferralController extends Controller
                     [
                         'date_of_birth' => $request->patient['date_of_birth'] ?? null,
                         'weight' => $request->patient['weight'] ?? null,
-                        'blood_group' => $request->patient['blood_group'] ?? null,
-                        'genotype' => $request->patient['genotype'] ?? null,
+                        'blood_group' => BloodGroup::tryFrom(data_get($request->patient, 'blood_group')),
+                        'genotype' => Genotype::tryFrom(data_get($request->patient, 'genotype')),
                     ]
                 );
 

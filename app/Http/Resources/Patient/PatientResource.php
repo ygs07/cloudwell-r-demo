@@ -20,8 +20,8 @@ class PatientResource extends JsonResource
             'id' => $this->id,
             'date_of_birth' => $this->date_of_birth,
             'weight' => $this->weight,
-            'blood_group' => $this->blood_group,
-            'genotype' => $this->genotype,
+            'blood_group' => $this->blood_group?->label(),
+            'genotype' => $this->genotype?->label(),
             'patient_number' => $this->patient_number
         ];
     }
