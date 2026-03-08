@@ -1,0 +1,11 @@
+{
+    "mcpServers": {
+        "laravel-boost": {
+            "command": "/Users/yusufshehu/Library/Application Support/Herd/bin/php85",
+            "args": [
+                "/Users/yusufshehu/Code/cloud-well-referrals/artisan",
+                "boost:mcp"
+            ]
+        }
+    }
+}
