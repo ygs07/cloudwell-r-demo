@@ -23,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         RateLimiter::for('referrals', function (Request $request) {
-            return Limit::perMinute(1)->by(
+            return Limit::perMinute(60)->by(
                 $request->user()?->currentAccessToken()?->id ?: $request->ip()
             )
                 ->response(
