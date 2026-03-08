@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\v1;
 
 use App\Enums\ReferralStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Referral\CancelReferralRequest;
 use App\Http\Requests\Referral\StoreReferralRequest;
 use App\Http\Resources\Referral\ReferralResource;
 use App\Http\Resources\Referral\ReferralResourceCollection;
@@ -80,6 +81,39 @@ class ReferralController extends Controller
         return response()->json(
             new ReferralResource($referral),
         );
+    }
+
+    public function cancel(CancelReferralRequest $request, Referral $referral): JsonResponse
+    {
+        try {
+            $referral->update([
+                'status' => ReferralStatus::CANCELLED,
+                'cancellation_reason' => $request->cancellation_reason,
+            ]);
+
+            $referral->auditLogs()->create([
+                'action' => 'cancelled',
+                'old_values' => ['status' => $referral->status],
+                'new_values' => [
+                    'status' => ReferralStatus::CANCELLED,
+                    'cancellation_reason' => $request->cancellation_reason,
+                ],
+            ]);
+
+            return response()->json([
+                'message' => 'Referral cancelled successfully',
+                'data' => new ReferralResource($referral),
+            ], 200);
+        } catch (\Throwable $e) {
+            \Log::error('Error cancelling referral: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'message' => 'Failed to cancel referral',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
 }

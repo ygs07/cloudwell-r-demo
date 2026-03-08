@@ -16,4 +16,8 @@ Route::prefix('/v1')->group(function () {
     Route::get('/referrals/{referral}', [ReferralController::class, 'show'])
         ->name('api.v1.referrals.show')
         ->middleware('auth:sanctum');
+
+    Route::patch('/referrals/{referral}/cancel', [ReferralController::class, 'cancel'])
+        ->name('api.v1.referrals.cancel')
+        ->middleware('auth:sanctum');
 });
