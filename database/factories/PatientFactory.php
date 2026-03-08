@@ -17,7 +17,11 @@ class PatientFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'patient_number' => $this->faker->unique()->numerify('PT#####'),
+            'date_of_birth' => $this->faker->date(),
+            'weight' => $this->faker->numberBetween(40, 120) . 'kg',
+            'blood_group' => $this->faker->numberBetween(1, 4),
+            'genotype' => $this->faker->numberBetween(1, 4),
         ];
     }
 }
