@@ -17,7 +17,9 @@ class ReferringPartyFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name' => $this->faker->name(),
+            'system_id' => $this->faker->unique()->uuid(),
+            'type' => $this->faker->numberBetween(1, 2),
         ];
     }
 }
