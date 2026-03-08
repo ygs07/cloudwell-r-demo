@@ -35,6 +35,8 @@ This document outlines the architectural decisions, database schema choices, and
 - *Basic Triage Rules:* The current asynchronous triage logic is hardcoded into the `TriageReferral` job (e.g., specific priority integers or checking for the word "emergency"). While fast to implement, it lacks dynamic configurability.
 - *Default Queue Driver:* Depending on local setups, the queue driver might just be running synchronously or via the DB. For high scale, a robust in-memory datastore is preferred.
 - *Permission Granularity:* Currently, Sanctum verifies generic authentication, but granular Role-Based Access Control (e.g., distinguishing an Admin from a regular Nurse cancelling a referral) is not deeply modeled yet.
+- *Lingering Referrals:* Currenlty simply rejecting a referral leads to the end of the lifecycle of a referral but an admin or someone should be able to send back a referral to the originator to edit then send back 
+
 
 **What I would improve with more time:**
 - **Rules Engine for Triage**: Implement a dedicated Rules Engine or integrate a package so that clinical triage rules can be configured via a database UI rather than changing code.
@@ -42,3 +44,5 @@ This document outlines the architectural decisions, database schema choices, and
 - **API Documentation Generation**: Integrate a package like Scribe or L5-Swagger to auto-generate OpenAPI/Swagger documentation directly from the codebase.
 - **Comprehensive RBAC**: Introduce Spatie permissions or Laravel Bouncer to map distinct access levels for different polymorphic user types (e.g., only authorized staff can cancel a triaged referral).
 - **Webhooks**: Provide an outbound webhook infrastructure to notify external systems (Referring Parties) when a referral status changes.
+- **Broader Lifecycle for Referrals**: Rejecting a referral should lead to a sending back of the referral to make edits and then resubmit for processing.
+
