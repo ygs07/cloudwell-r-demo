@@ -61,13 +61,13 @@ class Referral extends Model
     }
 
 
-    public function scopeSearchAndFilter($query, array $filters)
+    public function scopeFilter($query, array $filters)
     {
         if (isset($filters['status'])) {
-            $query->where('status', $filters['status']);
+            $query->where('status', ReferralStatus::{$filters['status']}->value);
         }
         if (isset($filters['priority'])) {
-            $query->where('priority', $filters['priority']);
+            $query->where('priority', ReferralPriority::{($filters['priority'])}->value);
         }
         if (isset($filters['referring_party_id'])) {
             $query->where('referring_party_id', $filters['referring_party_id']);

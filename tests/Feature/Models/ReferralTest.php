@@ -48,7 +48,12 @@ class ReferralTest extends TestCase
             'optional_notes' => 'Patient prefers afternoon appointments',
         ];
 
-        $response = $this->actingAs($user, 'sanctum')->postJson('/api/v1/referrals', $payload);
+        $response = $this->actingAs($user, 'sanctum')->postJson('/api/v1/referrals', 
+        $payload,
+            [
+                'Idempotency-Key' => 44
+            ]
+    );
 
         $response->assertStatus(201)
             ->assertJsonPath('message', 'Referral created successfully')
@@ -99,7 +104,12 @@ class ReferralTest extends TestCase
             ],
         ];
 
-        $response = $this->actingAs($user, 'sanctum')->postJson('/api/v1/referrals', $payload);
+        $response = $this->actingAs($user, 'sanctum')->postJson('/api/v1/referrals', $payload,
+
+            [
+                'Idempotency-Key' => 44
+            ]
+    );
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors([

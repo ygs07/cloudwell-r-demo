@@ -21,7 +21,7 @@ class ReferralController extends Controller
     public function index(Request $request)
     {
         $referrals = Referral::with('patient', 'referringParty')
-            ->searchAndFilter($request->all())
+            ->Filter($request->all())
             ->paginate(10);
         return response()->json(
             new ReferralResourceCollection($referrals),
