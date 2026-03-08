@@ -11,8 +11,6 @@ class CancelReferralRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        $referral = $this->route('referral');
-        abort_if(!in_array($referral->status->value, [1, 2, 3, 4]) || $referral->priority > 2, 400, 'Referral cannot be cancelled');
         return true;
     }
 

@@ -23,6 +23,7 @@ class Referral extends Model
         'priority',
         'referring_party_id',
         'optional_notes',
+        'cancellation_reason',
         'created_at',
         'updated_at',
         'status',

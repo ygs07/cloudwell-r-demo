@@ -85,6 +85,8 @@ class ReferralController extends Controller
 
     public function cancel(CancelReferralRequest $request, Referral $referral): JsonResponse
     {
+        abort_if($referral->status !== ReferralStatus::TRIAGING, 400, 'Referral cannot be cancelled');
+
         try {
             $referral->update([
                 'status' => ReferralStatus::CANCELLED,
