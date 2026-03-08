@@ -36,6 +36,8 @@ This document outlines the architectural decisions, database schema choices, and
 - *Default Queue Driver:* Depending on local setups, the queue driver might just be running synchronously or via the DB. For high scale, a robust in-memory datastore is preferred.
 - *Permission Granularity:* Currently, Sanctum verifies generic authentication, but granular Role-Based Access Control (e.g., distinguishing an Admin from a regular Nurse cancelling a referral) is not deeply modeled yet.
 - *Lingering Referrals:* Currenlty simply rejecting a referral leads to the end of the lifecycle of a referral but an admin or someone should be able to send back a referral to the originator to edit then send back 
+- *Assusmed Structure and Existence of other systems:* Currently unaware of the structure of other internal systems and if for example the share common information with referral system information like Patient details
+
 
 
 **What I would improve with more time:**
@@ -45,4 +47,4 @@ This document outlines the architectural decisions, database schema choices, and
 - **Comprehensive RBAC**: Introduce Spatie permissions or Laravel Bouncer to map distinct access levels for different polymorphic user types (e.g., only authorized staff can cancel a triaged referral).
 - **Webhooks**: Provide an outbound webhook infrastructure to notify external systems (Referring Parties) when a referral status changes.
 - **Broader Lifecycle for Referrals**: Rejecting a referral should lead to a sending back of the referral to make edits and then resubmit for processing.
-
+- **Provide user access for Patients**: Patients should be able to login and cancel their own referrals manually. And also to edit their bio information like weight, sex, genotype etc
