@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Http\Resources\Referral;
+namespace App\Http\Resources\ReferringParty;
 
-use App\Http\Resources\BasePaginatedCollection;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class ReferralResourceCollection extends BasePaginatedCollection
+class ReferringPartyResourceCollection extends ResourceCollection
 {
-    protected $resourceClass = ReferralResource::class;
     /**
      * Transform the resource collection into an array.
      *

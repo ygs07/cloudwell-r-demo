@@ -2,6 +2,10 @@
 
 namespace App\Http\Resources\Referral;
 
+use App\Http\Resources\AuditLog\AuditLogResourceCollection;
+use App\Http\Resources\Patient\PatientResource;
+use App\Http\Resources\ReferringParty\ReferringPartyResource;
+use App\Models\AuditLog;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -25,6 +29,9 @@ class ReferralResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'status' => $this->status,
+            'patient' => PatientResource::make($this->whenLoaded('patient')),
+            'audit_logs' => AuditLogResourceCollection::make($this->whenLoaded('auditLogs')),
+            'referring_party' => ReferringPartyResource::make($this->whenLoaded('referringParty')),
         ];
     }
 }

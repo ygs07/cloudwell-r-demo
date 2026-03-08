@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Resources\Referral;
+namespace App\Http\Resources\Patient;
 
 use App\Http\Resources\BasePaginatedCollection;
 use Illuminate\Http\Request;
 
-class ReferralResourceCollection extends BasePaginatedCollection
+class PatientResourceCollection extends BasePaginatedCollection
 {
-    protected $resourceClass = ReferralResource::class;
+    protected $resourceClass = PatientResource::class;
     /**
      * Transform the resource collection into an array.
      *
