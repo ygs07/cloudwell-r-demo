@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('referring_parties', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('system_id')->unique();
+            $table->integer('type')->default(1);
             $table->timestamps();
         });
     }

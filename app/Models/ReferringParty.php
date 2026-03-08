@@ -9,4 +9,10 @@ class ReferringParty extends Model
 {
     /** @use HasFactory<\Database\Factories\ReferringPartyFactory> */
     use HasFactory;
+
+    protected $fillable = [
+        'name',
+        'system_id',
+        'type',
+    ];
 }
