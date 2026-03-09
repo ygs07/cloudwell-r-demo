@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Api\v1\ReferralController;
+use App\Http\Controllers\API\v1\ReferralController;
 use App\Http\Middleware\EnsureIdempotency;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
