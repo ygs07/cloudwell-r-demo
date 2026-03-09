@@ -30,6 +30,7 @@ class ReferralTest extends TestCase
         $staff = \App\Models\Staff::factory()->create();
         $user = $staff->user;
 
+        $token = $user->createToken('test-token', ['referral:manage'])->plainTextToken;
         $payload = [
             'patient' => [
                 'patient_number' => 'PT-12345',
@@ -48,12 +49,11 @@ class ReferralTest extends TestCase
             'optional_notes' => 'Patient prefers afternoon appointments',
         ];
 
-        $response = $this->actingAs($user, 'sanctum')->postJson('/api/v1/referrals', 
-        $payload,
-            [
-                'Idempotency-Key' => 44
-            ]
-    );
+        $response = $this->withHeaders([
+            'Authorization' => "Bearer $token",
+            'Idempotency-Key' => '44',
+        ])->postJson('/api/v1/referrals', $payload);
+
 
         $response->assertStatus(201)
             ->assertJsonPath('message', 'Referral created successfully')
@@ -85,6 +85,7 @@ class ReferralTest extends TestCase
         ]);
 
         Queue::assertPushed(TriageReferral::class);
+        $user->tokens()->delete();
     }
 
     public function test_referral_creation_validation_fails_with_invalid_data(): void
@@ -104,12 +105,12 @@ class ReferralTest extends TestCase
             ],
         ];
 
-        $response = $this->actingAs($user, 'sanctum')->postJson('/api/v1/referrals', $payload,
+        $token = $user->createToken('test-token', ['referral:manage'])->plainTextToken;
 
-            [
-                'Idempotency-Key' => 44
-            ]
-    );
+        $response = $this->withHeaders([
+            'Authorization' => "Bearer $token",
+            'Idempotency-Key' => '44',
+        ])->postJson('/api/v1/referrals', $payload);
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors([
@@ -118,47 +119,56 @@ class ReferralTest extends TestCase
                 'priority',
                 'referring_party.name',
             ]);
+
+        $user->tokens()->delete();
     }
 
-    public function test_referral_can_be_cancelled_only_if_triaged(): void
+    public function test_referral_can_be_cancelled_only_if_allowed(): void
     {
         Queue::fake();
         $staff = \App\Models\Staff::factory()->create();
         $user = $staff->user;
+        $token = $user->createToken('test-token', ['referral:manage'])->plainTextToken;
 
-        $newReferral = Referral::factory()->create([
-            'status' => ReferralStatus::RECEIVED,
+        // 1️⃣ Referral that cannot be cancelled (e.g., REJECTED)
+        $nonCancellable = Referral::factory()->create([
+            'status' => ReferralStatus::REJECTED->value,
         ]);
 
-        $response = $this->actingAs($user, 'sanctum')->patchJson(
-            "/api/v1/referrals/{$newReferral->id}/cancel",
-            ['cancellation_reason' => 'Test cancellation reason']
-        );
+        $response = $this->withHeaders([
+            'Authorization' => "Bearer $token",
+            'Idempotency-Key' => '45',
+        ])->patchJson("/api/v1/referrals/{$nonCancellable->id}/cancel", [
+                    'cancellation_reason' => 'Test cancellation reason'
+                ]);
 
-        $response->assertStatus(400);
+        $response->assertStatus(409);
 
-        $triagedReferral = Referral::factory()->create([
-            'status' => ReferralStatus::TRIAGING,
+        $cancellable = Referral::factory()->create([
+            'status' => ReferralStatus::TRIAGING->value,
         ]);
 
-        $response = $this->actingAs($user, 'sanctum')->patchJson(
-            "/api/v1/referrals/{$triagedReferral->id}/cancel",
-            ['cancellation_reason' => 'Test cancellation reason']
-        );
+        $response = $this->withHeaders([
+            'Authorization' => "Bearer $token",
+            'Idempotency-Key' => '46',
+        ])->patchJson("/api/v1/referrals/{$cancellable->id}/cancel", [
+                    'cancellation_reason' => 'Test cancellation reason'
+                ]);
 
         $response->assertStatus(200)
             ->assertJsonPath('message', 'Referral cancelled successfully');
 
         $this->assertDatabaseHas('referrals', [
-            'id' => $triagedReferral->id,
+            'id' => $cancellable->id,
             'status' => ReferralStatus::CANCELLED->value,
         ]);
 
         $this->assertDatabaseHas('audit_logs', [
-            'auditable_id' => $triagedReferral->id,
+            'auditable_id' => $cancellable->id,
             'auditable_type' => Referral::class,
             'action' => 'cancelled',
         ]);
+        $user->tokens()->delete();
     }
     public function test_async_triage_path_updates_referral_status(): void
     {
