@@ -58,7 +58,7 @@ class TriageReferral implements ShouldQueue
                 $this->referral->update(['status' => $status]);
 
                 AuditLog::create([
-                    'action' => 'triaging_completed',
+                    'action' => 'triage_completed',
                     'auditable_type' => Referral::class,
                     'auditable_id' => $this->referral->id,
                     'old_values' => ['status' => ReferralStatus::TRIAGING],
