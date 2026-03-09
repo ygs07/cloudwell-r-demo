@@ -77,4 +77,13 @@ class Referral extends Model
         }
         return $query;
     }
+
+    public function canBeCancelled(): bool
+    {
+        return in_array($this->status, [
+            ReferralStatus::RECEIVED,
+            ReferralStatus::TRIAGING,
+            ReferralStatus::ACCEPTED,
+        ], true);
+    }
 }
