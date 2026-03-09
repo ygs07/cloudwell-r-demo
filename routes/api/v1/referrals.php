@@ -19,5 +19,5 @@ Route::prefix('/v1')->group(function () {
 
     Route::patch('/referrals/{referral}/cancel', [ReferralController::class, 'cancel'])
         ->name('api.v1.referrals.cancel')
-        ->middleware('auth:sanctum', 'throttle:referrals');
+        ->middleware('auth:sanctum', 'throttle:referrals', 'idempotent');
 });

@@ -12,6 +12,7 @@ use App\Enums\ReferralStatus;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Queue;
+use Ramsey\Uuid\Uuid;
 use Tests\TestCase;
 
 class ReferralTest extends TestCase
@@ -109,7 +110,7 @@ class ReferralTest extends TestCase
 
         $response = $this->withHeaders([
             'Authorization' => "Bearer $token",
-            'Idempotency-Key' => '44',
+            'Idempotency-Key' => Uuid::uuid4(),
         ])->postJson('/api/v1/referrals', $payload);
 
         $response->assertStatus(422)
@@ -137,7 +138,7 @@ class ReferralTest extends TestCase
 
         $response = $this->withHeaders([
             'Authorization' => "Bearer $token",
-            'Idempotency-Key' => '45',
+            'Idempotency-Key' => Uuid::uuid4(),
         ])->patchJson("/api/v1/referrals/{$nonCancellable->id}/cancel", [
                     'cancellation_reason' => 'Test cancellation reason'
                 ]);
