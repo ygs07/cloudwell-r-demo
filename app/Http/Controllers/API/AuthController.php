@@ -24,7 +24,7 @@ class AuthController extends Controller
             ], 401);
         }
 
-        $token = $user->createToken('api-token', ['referrals:manage'])->plainTextToken;
+        $token = $user->createToken('api-token', ['referral:manage'])->plainTextToken;
 
         return response()->json([
             'token' => $token,
