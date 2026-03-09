@@ -7,6 +7,7 @@ use App\Enums\Genotype;
 use App\Enums\ReferralStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Referral\CancelReferralRequest;
+use App\Http\Requests\Referral\ListReferralRequest;
 use App\Http\Requests\Referral\StoreReferralRequest;
 use App\Http\Resources\Referral\ReferralResource;
 use App\Http\Resources\Referral\ReferralResourceCollection;
@@ -20,7 +21,7 @@ use Illuminate\Support\Facades\DB;
 class ReferralController extends Controller
 {
 
-    public function index(Request $request)
+    public function index(ListReferralRequest $request)
     {
         $referrals = Referral::with('patient', 'referringParty')
             ->Filter($request->all())
@@ -77,7 +78,7 @@ class ReferralController extends Controller
         }
     }
 
-    public function show(Referral $referral)
+    public function show(Referral $referral): JsonResponse
     {
         $referral->load('patient', 'referringParty');
         return response()->json(
@@ -87,7 +88,6 @@ class ReferralController extends Controller
 
     public function cancel(CancelReferralRequest $request, Referral $referral): JsonResponse
     {
-        abort_if($referral->status !== ReferralStatus::TRIAGING, 400, 'Referral cannot be cancelled');
 
         try {
             $referral->update([
