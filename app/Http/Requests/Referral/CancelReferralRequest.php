@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Referral;
 
+use App\Enums\ReferralStatus;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\JsonResponse;
 
 class CancelReferralRequest extends FormRequest
 {
@@ -11,7 +13,10 @@ class CancelReferralRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        
+        $referral = $this->route('referral');
+
+        return $referral->canBeCancelled() && auth()->user()->tokenCan('referral:manage');
     }
 
     /**
@@ -24,5 +29,13 @@ class CancelReferralRequest extends FormRequest
         return [
             'cancellation_reason' => ['required', 'string', 'max:255'],
         ];
+    }
+
+    /**
+     * Custom message if authorization fails.
+     */
+    protected function failedAuthorization(): JsonResponse
+    {
+        abort(409, 'Referral cannot be cancelledds');
     }
 }
